@@ -1,0 +1,19 @@
+@startuml
+
+title Diagrama de Casos de Uso
+
+left to right direction
+
+actor Empresas
+actor Administrador
+
+usecase UC1 as "RF1"
+usecase UC2 as "RF2"
+
+
+Empresas --> UC1
+Administrador --> UC2
+
+UC2 --> UC1 : <<includes>>
+
+@enduml

@@ -1,0 +1,141 @@
+@startuml uni-bot
+
+participant Router as Router
+participant "BotController" as BotCtrl
+participant "FlowController" as FlowCtrl
+participant "FieldValidator" as FieldValidator
+participant "BusinessValidator" as BusinessValidator
+participant "DataProcessor" as DataProcessor
+participant "AIGateway" as AIGateway
+participant "Service" as Service
+participant "JobModeler" as JobModeler
+participant "AI API" as AI
+
+--> Router : GET, POST /chat?description={job_description}
+activate Router
+    alt if job_description
+    Router -> BotCtrl : Routes job_description to BotController
+        deactivate Router
+    activate BotCtrl
+
+        BotCtrl -> FlowCtrl : Extract job fields based on job description
+        activate FlowCtrl
+
+        FlowCtrl -> FlowCtrl: Create threads to extract each section
+            loop while threads
+                FlowCtrl -> DataProcessor : Extract section's job fields based on job description
+                activate DataProcessor
+
+                    DataProcessor -> AIGateway : Extract section's job fields based on job description
+                    activate AIGateway
+                        AIGateway -> AIGateway : Create prompt formatted to each field of job fields
+                        AIGateway -> AI : Send prompt to AI API
+                        activate AI
+                            AI --> AIGateway : Returns JSON response with job fields
+                        deactivate AI
+
+                        AIGateway --> DataProcessor : Job field section extracted
+                    deactivate AIGateway
+                DataProcessor --> DataProcessor : Append job fields sections extracted
+            end
+
+            DataProcessor --> FlowCtrl : Returns extracted job fields
+            deactivate DataProcessor
+
+            FlowCtrl -> FlowCtrl: Create threads to validate each section
+            loop while threads
+                    FlowCtrl -> FieldValidator : Validate job fields' section
+                    activate FieldValidator
+
+                    alt if section has job fields
+                        FieldValidator -> BusinessValidator : Validate business rules for each job field
+                        activate BusinessValidator
+                            BusinessValidator --> FieldValidator : Returns business validation result
+                        deactivate BusinessValidator
+
+                        alt if result is valid
+                            FieldValidator -> FieldValidator: Keep job field value
+                        else
+                            alt if field type is 'date'
+                                FieldValidator -> DataProcessor : Extract date field
+                                activate DataProcessor
+                                    DataProcessor -> AIGateway : Extract date field based on job field
+                                    activate AIGateway
+                                        AIGateway -> AIGateway: Create prompt formatted to date field
+                                        AIGateway -> AI : Send prompt to AI API
+                                        activate AI
+                                            AI --> AIGateway : Returns date field
+                                        deactivate AI
+
+                                        AIGateway --> DataProcessor : Returns date field
+                                    deactivate AIGateway
+
+                                    DataProcessor --> FieldValidator : Returns date field
+                                    deactivate DataProcessor
+                                    
+                                    FieldValidator -> FieldValidator: Validate date field
+                                    activate FieldValidator
+                                        alt if valid
+                                            FieldValidator -> FieldValidator: Set date field
+                                        else
+                                            FieldValidator -> FieldValidator: Clean job field
+                                    end
+                                        deactivate FieldValidator
+                                end
+                            
+                            else
+                                FieldValidator -> FieldValidator: Clean job field
+                            end
+                    end
+
+                    FieldValidator -> FieldValidator: Append job fields' sections
+    
+                    FieldValidator -> FieldValidator : Clean job fields' section
+                activate FieldValidator
+                    alt if field type is 'options' and job field is not in options
+                        FieldValidator -> FieldValidator: Clean Value
+                    else if field type is 'string' and job field is 'Não Sei'
+                        FieldValidator -> FieldValidator: Clean value
+                    else
+                        FieldValidator -> FieldValidator: Keep job field value
+                    end
+                FieldValidator --> FieldValidator : Appends cleaned job field section
+                deactivate FieldValidator
+            end
+
+            FieldValidator --> FlowCtrl : Returns validated job fields
+            deactivate FieldValidator
+
+        FlowCtrl -> DataProcessor : Fix schedule fields
+        activate DataProcessor
+            DataProcessor -> DataProcessor : Fix schedule fields
+            DataProcessor -> DataProcessor : Fix type of applicant fields
+            DataProcessor -> DataProcessor : Fix work mode fields
+            DataProcessor -> FlowCtrl : Returns fixed job fields
+        deactivate DataProcessor
+
+        FlowCtrl --> BotCtrl: Returns job fields
+        deactivate FlowCtrl
+
+    alt job fields
+    BotCtrl -> FlowCtrl : Model job with job fields
+    activate FlowCtrl
+
+        FlowCtrl -> Service : Model job with job fields
+        activate Service
+            Service -> JobModeler : Model job with job fields
+            activate JobModeler
+                JobModeler --> Service : Returns modelled job
+            deactivate JobModeler
+            Service --> FlowCtrl : Returns modelled job
+        deactivate Service
+        FlowCtrl --> BotCtrl : Returns modelled job
+        deactivate FlowCtrl
+    end
+    BotCtrl --> Router : Returns modelled job
+    deactivate BotCtrl
+
+<-- Router: Returns modelled job
+deactivate Router
+end
+@enduml

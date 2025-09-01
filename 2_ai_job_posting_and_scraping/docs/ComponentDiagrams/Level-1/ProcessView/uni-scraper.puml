@@ -1,0 +1,36 @@
+@startuml uni-scraper
+
+actor Admin as User
+participant UniJobsForms as System
+participant "AI API" as AI
+participant "Website HTML" as websiteHTML
+
+activate User
+    User -> System : Request Web Scraping
+        activate System
+
+        loop websites
+            System -> System : Get website URL
+            System -> System : Access website
+            System -> websiteHTML : Fetch HTML content
+                activate websiteHTML
+                websiteHTML --> System : Returns HTML content
+            deactivate websiteHTML
+
+            System -> System : Parse HTML content
+            activate System
+                System -> System : Extract important data from HTML
+                System -> System : Create a job description based on extracted data
+            deactivate System
+
+            note right of System
+                This phase is equal as UC1 process view
+            end note
+
+            System -> System : Append job fields with link
+        end
+    System -> User : Returns modelled job fields data list
+    deactivate System
+deactivate User
+
+@enduml

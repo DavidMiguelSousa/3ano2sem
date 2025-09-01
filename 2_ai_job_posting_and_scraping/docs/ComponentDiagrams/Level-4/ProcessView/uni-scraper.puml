@@ -1,0 +1,67 @@
+@startuml uni-scraper
+
+participant Router as Router
+participant "Scraper Controller" as ScraperCtrl
+participant "Scraper Processor" as ScraperProcessor
+note right of ScraperProcessor
+    ScraperProcessor will 
+    redirect to a specific
+    scraper, based on the website,
+    filtering important
+    data to build 'job_description'
+end note
+participant "Website HTML" as websiteHTML
+
+--> Router : GET, POST /scraper
+activate Router
+    Router -> ScraperCtrl : Scrape websites
+        activate ScraperCtrl
+
+            loop websites
+                ScraperCtrl -> ScraperProcessor : Process website
+                activate ScraperProcessor
+
+                    ScraperProcessor -> ScraperProcessor : Check website 
+                    note right of ScraperProcessor
+                        Example based on 'netempregos.pt':
+                    end note
+                    ScraperProcessor -> ScraperProcessor : Check if website is supported
+                    ScraperProcessor -> ScraperProcessor : Load cookies if needed
+
+                    ScraperProcessor -> websiteHTML : Fetch website HTML
+                    activate websiteHTML
+                        websiteHTML --> ScraperProcessor : Returns HTML content
+                    deactivate websiteHTML
+
+                    ScraperProcessor -> ScraperProcessor : Extract cards with job postings
+                    ScraperProcessor -> ScraperProcessor : Extract job postings from cards
+                    ScraperProcessor -> websiteHTML : Extract job description from job postings
+                    activate websiteHTML
+                        websiteHTML --> ScraperProcessor : Returns job description's HTML content
+                    deactivate websiteHTML
+                    ScraperProcessor -> ScraperProcessor : Create job description from job post
+                    ScraperProcessor -> ScraperCtrl : Returns job description
+                deactivate ScraperProcessor
+                ScraperCtrl -> ScraperCtrl : Append job description to jobs list
+            end
+            ScraperCtrl -> ScraperCtrl : Model job fields from job description            
+
+    alt job fields
+        ScraperCtrl -> FlowCtrl : Extract job fields
+        deactivate ScraperCtrl
+        activate FlowCtrl
+        note right of FlowCtrl
+            This phase is equal to the UC1 process view
+        end note
+
+            FlowCtrl --> ScraperCtrl : Returns modelled job fields
+            deactivate FlowCtrl
+            activate ScraperCtrl
+
+            ScraperCtrl -> ScraperCtrl : Appends modelled job fields,\nwebsite url and a flag marking\nif the modelled job field is complete
+            ScraperCtrl -> Router : Returns jobs list
+        deactivate ScraperCtrl
+
+<-- Router : Returns jobs list result
+deactivate Router
+@enduml

@@ -1,0 +1,64 @@
+@startuml uni-bot
+
+actor UniCompany as User
+participant UniJobsForms as System
+participant "AI API" as AI
+
+activate User
+    User -> System : Provides job description
+        activate System
+
+        System -> System: Create threads for each section
+        loop while threads
+            System -> AI : Requests to extract section's job fields based on job description
+            activate AI
+            AI --> System : Returns extracted job fields
+        deactivate AI
+        end
+        
+        alt if job fields
+            System -> System: Create threads for each section
+            loop while threads
+                System -> System : Validate business rules by section's job fields
+                activate System
+
+                alt if valid
+                    System -> System: Keep job field value
+                else
+                    alt if field type is 'date'
+                            System -> AI: Try to format date based on 'date' job field
+                            activate AI
+                                AI --> System : Returns date field
+                                deactivate AI
+                                System -> System: Validate date field
+                                activate System
+                                    alt if valid
+                                        System -> System: Set date field
+                                    else
+                                        System -> System: Clean job field
+                                end
+                                    deactivate System
+                            end
+                    else
+                        System -> System: Clean job field
+                    deactivate System
+                end
+
+
+                alt if field type is 'options' and job field is not in options
+                    System -> System: Clean Value
+                else if field type is 'string' and job field is 'Não Sei'
+                    System -> System: Clean value
+                else
+                    System -> System: Keep job field value
+                end
+
+                System -> System: Append job fields
+            end
+
+        System -> System : Model job fields
+    System -> User : Returns modelled job fields
+    deactivate System
+deactivate User
+
+@enduml

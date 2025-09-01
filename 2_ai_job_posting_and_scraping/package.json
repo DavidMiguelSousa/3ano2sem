@@ -1,0 +1,23 @@
+{
+  "name": "unilinkr-research-2_ai_job_posting_and_scraping",
+  "version": "1.0.0",
+  "description": "A FastAPI application for scraping AI job postings and providing a RESTful API.",
+"scripts": {
+  "start": "python -m uvicorn src.router:app --reload",
+  "test:all": "python -m unittest discover -s tests",
+  "test:file": "python -m unittest",
+  "coverage": "coverage erase && coverage run -m unittest discover -s tests && coverage report -m",
+  "coverage:html": "coverage erase && coverage run -m unittest discover -s tests && coverage html"
+},
+  "dependencies": {
+    "fastapi": "^0.95.2",
+    "uvicorn": "^0.22.0",
+    "beautifulsoup4": "^4.12.2",
+    "requests": "^2.31.0",
+    "pydantic": "^1.10.9"
+  },
+  "devDependencies": {
+    "python-dotenv": "^1.0.0",
+    "concurrently": "^8.2.0"
+  }
+}

@@ -1,0 +1,65 @@
+[{
+  "workMode": "Híbrido",
+  "address": "Rua da Flores 100, Porto",
+  "job_country": "Portugal",
+  "district": "",
+  "job_city": "Porto",
+  "lat": "0",
+  "lng": "0",
+  "pinCode": "Não está disponível",
+  "geoRadius": "25",
+  "scheduleType": "Full-time",
+  "type_of_applicant": "Equipas",
+  "startDateFullTime": "01/08/2025",
+  "endDateFullTime": "31/10/2025",
+  "vacanciesFullTime": "2",
+  "shiftName": "",
+  "vacanciesShit": "2",
+  "customShiftName": "",
+  "startDateCustom": "01/08/2025",
+  "endDateCustom": "31/10/2025",
+  "vacanciesCustom": "2",
+  "payment_frequency": "Mensal",
+  "amount": "1400€",
+  "how_to_pay_student": "Recibos Verdes",
+  "teams_amount": "2",
+  "teamIds": "Nenhuma informação é dada sobre \"equipas\" na oferta de emprego",
+  "benefits": "Os benefícios oferecidos incluem acesso a seguro de saúde e eventos de team-building Além disso, os trabalhadores podem realizar clock-in a apenas 25 metros do estabelecimento",
+  "company": "David",
+  "degreeOfSpecialization": "Especializado",
+  "jobTitle": "Backend Developer",
+  "workArea": "Catering",
+  "jobDescription": "O trabalho é como Backend Developer para a empresa David As responsabilidades incluem:\n\n- Construir APIs\n- Manter bases de dados\n\nSerá um cargo híbrido, trabalhando em Rua da Flores 100, no Porto, Portugal O horário de trabalho começa a 1 de agosto e termina a 31 de outubro\n\nÉ um emprego a tempo inteiro, com apenas 2 vagas disponíveis"
+},
+
+{
+  "job_title": "Desenvolvedor Backend",
+  "degree_of_specialization": "Especializado",
+  "area_of_work_id": 1,
+  "job_description": "Trabalho remoto com equipa ágil, foco em APIs REST e bases de dados.",
+  "work_mode": "remote",
+  "job_address": "Rua Exemplo 123",
+  "job_country": "Portugal",
+  "job_city": "Lisboa",
+  "job_latitude": "38.736946",
+  "job_longitude": "-9.142685",
+  "geofencing_radius": 10,
+  "schedule_type": "custom",
+  "payment_frequency": "monthly",
+  "amount": 1500,
+  "type_of_applicant": "graduate",
+  "benefits": "Cartão refeição, seguro de saúde",
+  "location_id": 1,
+  "job_start_date": "2025-05-10",
+  "job_end_date": "2025-08-10",
+
+  "how_to_pay_student": [
+    { "id": 2 }
+  ],
+
+  "teams": "David,Joana", 
+  
+  "schedule": "[{\"shiftName\":\"Manhã\",\"startDate\":\"2025-05-13\",\"endDate\":\"2025-07-13\",\"vacancies\":3,\"slots\":[{\"startTime\":\"09:00\",\"endTime\":\"13:00\"}],\"selectSlotDateType\":\"Daily\"}]",
+
+  "shedule_type": "part-time"
+}]
